@@ -1,1 +1,0 @@
-{"Modules":[{"Key":"","Source":"","Dir":"."},{"Key":"cloudsql-mysql","Source":"./terraform-google-cloudsql-ha","Dir":"terraform-google-cloudsql-ha"}]}
