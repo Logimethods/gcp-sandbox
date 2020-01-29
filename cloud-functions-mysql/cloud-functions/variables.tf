@@ -1,11 +1,6 @@
 ############################
 ###        FUNCTION      ###
 ############################
-
-variable "cloud_function" {
-    type = list(any)
-} 
-
 variable "cloud_function_definition" {
     type = object(
             {
