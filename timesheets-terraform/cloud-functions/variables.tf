@@ -1,7 +1,7 @@
 ############################
 ###        FUNCTION      ###
 ############################
-variable "cloud_function_definition" {
+/*variable "cloud_function_definition" {
     type = object(
             {
                 function_name           = string
@@ -15,4 +15,4 @@ variable "cloud_function_definition" {
             }
         )
     
-}
+}*/
