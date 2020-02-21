@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<style>
+table {
+  font-family: arial, sans-serif;
+  border-collapse: collapse;
+  width: 100%;
+}
+
+td, th {
+  border: 1px solid #dddddd;
+  text-align: left;
+  padding: 8px;
+}
+
+tr:nth-child(even) {
+  background-color: #dddddd;
+}
+</style>
+</head>
+    <body>
+		
+		<% orgs.forEach((org) => {%>
+			<table style="width:100%">
+				<h3> <%= org.org %> </h3>
+					<tr>
+						<th>Name</th>
+						<th>Week Status</th>
+						<th>Week Status Check Date</th>
+						<th>Month Status</th>
+						<th>Month Status Check Date</th>
+					</tr>
+				<%table_rows.forEach((table_row) => {%>
+					<%if (table_row.org == org.org) { %>
+						
+						<tr>
+							<td><a href="https://docs.google.com/spreadsheets/d/<%=table_row.id%>"> <%=table_row.name.split("Timesheet ")[1]%></a> </td>
+							
+							<td><%=table_row.week_status%></td>
+							<td><%=table_row.week_check_date%></td>
+							<td><%=table_row.month_status%></td>
+							<td><%=table_row.month_check_date%></td>
+						</tr>
+					<%}%>
+				<%});%>
+			</table>	
+		<%});%>
+	</body>
+</html>

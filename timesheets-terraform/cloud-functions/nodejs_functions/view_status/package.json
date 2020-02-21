@@ -1,0 +1,25 @@
+{
+  "name": "sample-http",
+  "version": "0.0.1",
+  "dependencies": {
+    "@google-cloud/logging-winston": "^3.0.5",
+    "@google-cloud/pubsub": "^1.4.1",
+    "ejs": "^3.0.1",
+    "express": "^4.17.1",
+    "fs": "0.0.1-security",
+    "googleapis": "^39.2.0",
+    "mysql": "github:mysqljs/mysql",
+    "package.json": "^2.0.1",
+    "promise": "^6.1.0",
+    "promise-mysql": "^4.1.3",
+    "winston": "^3.2.1"
+  },
+  "main": "index.js",
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "description": ""
+}

@@ -59,13 +59,14 @@ exports.fetchDriveFiles = (event, context, callback) => {
     console.log('event: ' + JSON.stringify(event));  
 // function newPara(){
 //     //weekly
-//     // var event = JSON.parse('{"@type":"type.googleapis.com/google.pubsub.v1.PubsubMessage","attributes":null,"data":"ewogICJkYXRhIjogewogICAgInRvcGljIjogIndlZWtseS10b3BpYyIsCiAgICAiZGF0ZSI6ICIwMS0wMS0yMDIwIgogIH0KfQ=="}');
+    // var event = JSON.parse('{"@type":"type.googleapis.com/google.pubsub.v1.PubsubMessage","attributes":null,"data":"e1wiZGF0YVwiOiB7XCJ0b3BpY1wiOiBcIm1vbnRobHktdG9waWNcIn19"}');
 //     //mothly
 //     var event = JSON.parse('{"@type":"type.googleapis.com/google.pubsub.v1.PubsubMessage","attributes":null,"data":"ewogICJkYXRhIjogewogICAgInRvcGljIjogIm1vbnRobHktdG9waWMiLAogICAgImRhdGUiOiAiMDEtMDEtMjAyMCIKICB9Cn0="}');
     var data_string = Buffer.from(event.data, 'base64').toString();
     var data = JSON.parse(data_string).data;
     var targetTopic     = data.topic;
-    var invokeDate      = data.date;
+    var this_date       = new Date();
+    var invokeDate      = (this_date.getMonth() + 1) + "-" + this_date.getDate() + "-" + this_date.getFullYear();
     console.log(`target: ${targetTopic}`);
     console.log(`invokeDate: ${invokeDate}`);
     console.log('Received request for topic: ' + targetTopic + ' and source date: ' + invokeDate);
@@ -179,7 +180,7 @@ exports.weeklyProcess = (event, context, callback) => {
     console.log('context: ' + JSON.stringify(context));
     
     // var context = JSON.parse('{"eventId":"443129627133141","timestamp":"2020-02-17T15:59:53.291Z","eventType":"google.pubsub.topic.publish","resource":{"service":"pubsub.googleapis.com","name":"projects/gcp-sandbox-266014/topics/montly-topic","type":"type.googleapis.com/google.pubsub.v1.PubsubMessage"}}');
-    // var event = JSON.parse('{"@type":"type.googleapis.com/google.pubsub.v1.PubsubMessage","attributes":{"isLast":"false"},"data":"eyJkYXRhIjp7ImZpbGVfbmFtZSI6IlRpbWVzaGVldCBJc21lZXQgS2F1ciIsImZpbGVfaWQiOiIxOXhWcEdmeGNHSmh1N0tockZld3o4WVVHRDJXN1ZyQ095TjNRVGN4Mm9PWSIsIm9yZyI6IkxvZ2ktTGFicyIsImRhdGUiOiIwMS0wMS0yMDIwIiwidG9waWMiOiJtb250bHktdG9waWMifX0="}');
+    // var event = JSON.parse('{"@type":"type.googleapis.com/google.pubsub.v1.PubsubMessage","attributes":{"isLast":"false"},"data":"eyJkYXRhIjp7ImZpbGVfbmFtZSI6IlRpbWVzaGVldCBXYWxkZXMgTWFjaGFkbyIsImZpbGVfaWQiOiIxRktmMExVdDJENDI1dXUwNktkLVBCem5hQlNVU0s2LWtDTjBwNWVDYm1jUSIsIm9yZyI6IkxvZ2ltZXRob2RzIiwiZGF0ZSI6IjAyLTExLTIwMjAiLCJ0b3BpYyI6IndlZWtseS10b3BpYyJ9fQ=="}');
     var isLast;
     try{
         isLast = event.attributes.isLast;
@@ -200,7 +201,7 @@ exports.weeklyProcess = (event, context, callback) => {
             if (err) throw err;
             const rows = res.data.values;
             var weekly_status = getWeekStatus(rows, data.date);
-            
+            console.log(weekly_status);
             var initCreatePoolPromise = createPool();
             initCreatePoolPromise.then((pool) => {
                 var existsStmt = 'SELECT id FROM status WHERE id = ?';
@@ -219,8 +220,6 @@ exports.weeklyProcess = (event, context, callback) => {
                     console.log('pool query for: ' + stmt + ' \nparams: ' + params)
                     pool.query(stmt, params, (err1, res1) => {
                         if (err1) throw err1;
-                        pool.end();
-                        
                     });
                 });
             });
@@ -232,7 +231,7 @@ exports.weeklyProcess = (event, context, callback) => {
             // const messageBuffer = Buffer.from('update webview', 'utf8');
             // topic.publish(messageBuffer);
         }
-        
+        pool.end();
         callback(null, "weekly process end.")
     });
 }
@@ -255,7 +254,7 @@ exports.monthlyProcess = (event, context, callback) => {
     console.log('context: ' + JSON.stringify(context));
     
     // var context = JSON.parse('{"eventId":"443129627133141","timestamp":"2020-02-17T15:59:53.291Z","eventType":"google.pubsub.topic.publish","resource":{"service":"pubsub.googleapis.com","name":"projects/gcp-sandbox-266014/topics/montly-topic","type":"type.googleapis.com/google.pubsub.v1.PubsubMessage"}}');
-    // var event = JSON.parse('{"@type":"type.googleapis.com/google.pubsub.v1.PubsubMessage","attributes":{"isLast":"false"},"data":"eyJkYXRhIjp7ImZpbGVfbmFtZSI6IlRpbWVzaGVldCBJc21lZXQgS2F1ciIsImZpbGVfaWQiOiIxOXhWcEdmeGNHSmh1N0tockZld3o4WVVHRDJXN1ZyQ095TjNRVGN4Mm9PWSIsIm9yZyI6IkxvZ2ktTGFicyIsImRhdGUiOiIwMS0wMS0yMDIwIiwidG9waWMiOiJtb250bHktdG9waWMifX0="}');
+    // var event = JSON.parse('{"@type":"type.googleapis.com/google.pubsub.v1.PubsubMessage","attributes":{"isLast":"false"},"data":"eyJkYXRhIjp7ImZpbGVfbmFtZSI6IlRpbWVzaGVldCBQYXNjYWwgR2F1dGhpZXIiLCJmaWxlX2lkIjoiMXVrMG1WNVh1Y1JRd3drVGVmNDlwOW9KX3NNOVRyS3BZX1BLZ3VlNWxGZ1UiLCJvcmciOiJMb2dpbWV0aG9kcyIsImRhdGUiOiIyLTIxLTIwMjAiLCJ0b3BpYyI6Im1vbnRobHktdG9waWMifX0="}');
     var isLast;
     try{
         isLast = event.attributes.isLast;
@@ -271,12 +270,19 @@ exports.monthlyProcess = (event, context, callback) => {
         const sheets = google.sheets({version: 'v4', auth: authen});
         sheets.spreadsheets.values.get({
             spreadsheetId: data.file_id,
-            range:  sheetNameForDate(data.date),
+            //monthly set date to month - 1
+            range:  sheetNameForDate(dateStringLessMonth(data.date)),
         }, (err, res)=>{
             if (err) throw err;
             const rows = res.data.values;
             console.log(rows[7][4]);
-            var monthly_status = rows[7][4] === 'Yes';
+            var monthly_status = 'N/A'; 
+            if(rows[7][4] === 'Yes'){
+                monthly_status = 'Y';
+            }else{
+                monthly_status = 'N';
+            }
+            console.log(`month status ${monthly_status}`);
             var initCreatePoolPromise = createPool();
             initCreatePoolPromise.then((pool) => {
                 var existsStmt = 'SELECT id FROM status WHERE id = ?';
@@ -295,24 +301,24 @@ exports.monthlyProcess = (event, context, callback) => {
                     console.log('pool query for: ' + stmt + ' \nparams: ' + params)
                     pool.query(stmt, params, (err1, res1) => {
                         if (err1) throw err1;
-                        pool.end();
-                        
                     });
                 });
             });
         });
     }).finally(() => {
-        console.log(isLast);
         if(isLast){
             // const topic = pubsub.topic(UPDATE_WEB_VIEW_TOPIC);
             // const messageBuffer = Buffer.from('update webview', 'utf8');
             // topic.publish(messageBuffer);
         }
-        
         callback(null, "monthly process end.")
     });
 }
-
+function dateStringLessMonth(date){
+    var date_split = date.split('-');
+    var m = date_split[0] - 1;
+    return m + '-' + date_split[1] + '-' + date_split[2];
+}
 //[][]
 // mm-dd-yyyy
 function getWeekStatus(rows, date){
@@ -330,6 +336,8 @@ function getWeekStatus(rows, date){
 //[]
 // mm-dd-yyyy
 function checkWeekForRow(row, date){
+    console.log(row);
+    console.log(date);
     var monday = mondayDateForDate(date);
     var dayIndex = monday.getDate() - 1;
     var checkRange = 5;
@@ -339,16 +347,16 @@ function checkWeekForRow(row, date){
         checkRange = daysInM - dayIndex;
     }
     // console.log(row.slice(dayIndex, dayIndex + checkRange));
-    var ok = true;
+    var ok = 'Y';
     row.slice(dayIndex, dayIndex + checkRange).forEach((value) => {
         if(ok){
             try{
                 intval = parseInt(value)
                 if(intval < 8){
-                    ok = false
+                    ok = 'N';
                 }
             }catch(err){
-                ok = false;
+                ok = 'N';
             }
         }
     });
@@ -365,9 +373,7 @@ function sheetNameForDate(date){
     const monthNames = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN",
         "JULY", "AUG", "SEPT", "OCT", "NOV", "DEC"];
     var split = date.split('-');
-    //select prior month to current date
-    var month = parseInt(split[0]) - 2;
-	// var month = parseInt(split[0]) - 1;//remove
+    var month = parseInt(split[0]) - 1;
     var year = split[2];
     if(month < 0) {
         month = 11;
@@ -411,7 +417,7 @@ function createPool() {
         socketPath: `/cloudsql/gcp-sandbox-266014:us-east4:mysql-s-sandbox-us-east4-master`,
 		// host:	'35.245.9.72',
 		// port:	'3306',
-        connectionLimit: 5,
+        connectionLimit: 100,
         connectTimeout: 10000, // 10 seconds
         acquireTimeout: 10000, // 10 seconds
         waitForConnections: true, // Default: true
