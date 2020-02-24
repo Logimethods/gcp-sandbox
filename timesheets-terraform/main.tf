@@ -176,7 +176,7 @@ module "cloud_scheduler" {
             name        = "timesheets_weekly"
             region      = "us-east4"
             timezone    = "America/New_York"
-            schedule    = {"first" = "0 18 * * 5", "second" = "0 18 * * 6", "third" = "0 18 * * 0", "fourth" = "0 8 * * 1"}
+            schedule    = {"first" = "0 18 * * 5", "second" = "0 18 * * 6", "third" = "0 18 * * 0", /*"fourth" = "0 8 * * 1"*/}
             pubsub_target   = {
                 topic_name  = "${local.gps_topic_cron}"
                 data        = base64encode(jsonencode({"data": {"topic": "${local.gps_topic_week}"}}))
