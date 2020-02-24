@@ -10,9 +10,10 @@ locals {
 }
 
 provider "google" {
-  project = "${var.gcp_project}"
-  region  = "${var.gcp_region}"
-  version = "~> 3.9.0"
+  project       = "${var.gcp_project}"
+  region        = "${var.gcp_region}"
+  credentials   = "${var.service_account_key}"
+  version       = "~> 3.9.0"
 }
 
 provider "archive" {
