@@ -123,8 +123,12 @@ function sendFileForProcessing(files, org, date, targetTopic){
     console.log(`sending ${files.length} to topic ${targetTopic}`);
     var lastFile = files.pop();
     var lastFileAttributes = {isLast: 'true'};
-    return Promise.all(files.map((file) => {publishMessage(file, org, date, targetTopic)})
-        .concat([publishMessage(lastFile, org, date, targetTopic, lastFileAttributes)]));
+    return Promise.all(files.map((file) => {
+            publishMessage(file, org, date, targetTopic)
+        })
+        .concat([
+            publishMessage(lastFile, org, date, targetTopic, lastFileAttributes)
+        ]));
 }
 function publishMessage(file, org, date, targetTopic, attributes) {
     const attr = attributes || { 
@@ -145,7 +149,9 @@ function publishMessage(file, org, date, targetTopic, attributes) {
     const messageBuffer = Buffer.from(JSON.stringify(messageObject), 'utf8');
     try {
         console.log(`sending to topic ${targetTopic} data: ${JSON.stringify(messageObject)}`);                
-        return topic.publish(messageBuffer, attr);
+        return topic.publish(messageBuffer, attr).then((value) => {
+            console.log(`value ${value}`);
+        });
     }catch (err){
         console.log('An error occured publishing to ' + targetTopic + ' with error ' + JSON.stringify(err));
         console.error(err);
@@ -225,13 +231,11 @@ exports.weeklyProcess = (event, context, callback) => {
             });
         });
     }).finally(() => {
-        console.log(isLast);
         if(isLast){
             // const topic = pubsub.topic(UPDATE_WEB_VIEW_TOPIC);
             // const messageBuffer = Buffer.from('update webview', 'utf8');
             // topic.publish(messageBuffer);
         }
-        pool.end();
         callback(null, "weekly process end.")
     });
 }

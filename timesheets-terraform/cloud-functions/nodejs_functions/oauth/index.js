@@ -51,7 +51,7 @@ function createAuth(client_id, client_secret, redirectUri, token){
  * @param {!express:Request} req HTTP request context.
  * @param {!express:Response} res HTTP response context.
  */
-exports.updateAcessToken = async (req, res) => {
+exports.updateAccessToken = async (req, res) => {
 //  trypool();
 //  function trypool(){
     var initCreatePoolPromise = createPool();
